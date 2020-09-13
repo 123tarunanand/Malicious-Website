@@ -1,0 +1,15 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+
+<h1>{{ query }}</h1>
+<h1>{{ query_result }}</h1>
+
+{% for profile in query_result %}
+
+<h1>{{ profile.name }}</h1>
+
+{% endfor %}
+
+
+{% endblock %}
