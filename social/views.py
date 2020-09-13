@@ -15,16 +15,12 @@ def login_view(request):
     password = request.POST.get('password')
     query = 'SELECT * FROM social_profile WHERE "email" = "%s" AND "password" = "%s"' % (email, password)
     query_result = Profile.objects.raw(query)
+    context = {}
     if query_result:
-        print(query_result)
-        for profile in query_result:
-            print(profile)
-    context = {
-        'query': query,
-        'query_result': query_result
-    }
-    return render(request, 'social/login.html', context)
-
+        context['query_result'] = query_result
+        return render(request, 'social/login.html', context)
+    else:
+        return render(request, 'social/home.html', context)
 
 def profile_view(request, profile_id):
     profile = Profile.objects.get(pk=profile_id)

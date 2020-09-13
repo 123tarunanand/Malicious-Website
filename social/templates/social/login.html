@@ -2,12 +2,9 @@
 
 {% block content %}
 
-<h1>{{ query }}</h1>
-<h1>{{ query_result }}</h1>
-
 {% for profile in query_result %}
 
-<h1>{{ profile.name }}</h1>
+<h1>Successfully logged in as: {{ profile.name }}</h1>
 
 {% endfor %}
 

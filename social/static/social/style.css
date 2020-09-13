@@ -1,3 +1,21 @@
+.login-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    background: #0069d9;
+}
+
+.login-modal {
+    position: absolute;
+    width: 30%;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 50px !important;
+    background: #fff;
+}
+
 .linked-img {
     width: 90px;
     height: 90px;
