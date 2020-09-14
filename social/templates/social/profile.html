@@ -1,7 +1,7 @@
 {% extends 'social/base.html' %}
 
 {% block content %}
-
+<div id="viewer" style="display:none;">{{ request.user.profile.pk }}</div>
   <div class="container">
     <div class="row" style="padding-top: 100px;">
         <div class="col-4">

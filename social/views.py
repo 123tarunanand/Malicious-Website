@@ -1,6 +1,10 @@
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.http import HttpResponse
+from django.views import View
 from .models import Profile
+from .forms import ProfileForm
 
 # Create your views here.
 
@@ -22,12 +26,21 @@ def login_view(request):
     else:
         return render(request, 'social/home.html', context)
 
-def profile_view(request, profile_id):
-    profile = Profile.objects.get(pk=profile_id)
-    context = {
-        'profile': profile
-    }
-    return render(request, 'social/profile.html', context)
+@method_decorator(csrf_exempt, name='dispatch')
+class ProfileView(View):
+    def get(self, request):
+        pk = request.GET.get('pk')
+        profile = Profile.objects.get(pk=pk)
+        return render(request, 'social/profile.html', {'profile': profile, 'request': request})
+
+    def post(self, request):
+        profile = Profile.objects.get(pk=request.POST.get('pk'))
+        for key, value in request.POST.items():
+            attr = getattr(profile, key, None)
+            if attr:
+                setattr(profile, key, value)
+        profile.save()
+        return HttpResponse("<h1>Done</h1>")
 
 
 def search_view(request):

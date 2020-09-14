@@ -1,0 +1,29 @@
+<script>
+
+var viewer_id = document.getElementById("viewer").innerHTML;
+var viewer_bio = "";
+
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        resp = xhttp.response
+        var reg = new RegExp('<p id="bio">(?<bio>.*)<\/p>');
+        var match = reg.exec(resp)
+        bio = match.groups.bio
+        console.log(bio);
+    }
+};
+var get_url = "http://127.0.0.1:8000/social/profile/" + "?pk=" + viewer_id
+xhttp.open("GET", get_url, true);
+xhttp.send();
+
+var xhr = new XMLHttpRequest();
+xhr.open("POST", "http://127.0.0.1:8000/social/profile/", true);
+
+xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+var data = "pk=" + viewer_id;
+
+xhr.send(data);
+
+</script>
