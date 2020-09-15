@@ -9,13 +9,23 @@ import hashlib
 
 # Create your views here.
 
-@csrf_exempt
-def home_view(request):
-    try:
+@method_decorator(csrf_exempt, name='dispatch')
+class HomeView(View):
+    def get(self,request):
+        try:
+            profile = Profile.objects.get(pk=request.session['user_id'])
+            return render(request, 'social/home_profile.html',{'profile':profile})
+        except:
+            return redirect('login_view')
+
+    def post(self, request):
         profile = Profile.objects.get(pk=request.session['user_id'])
-        return render(request, 'social/home_profile.html',{'profile':profile})
-    except:
-        return redirect('login_view')
+        for key, value in request.POST.items():
+            attr = getattr(profile, key, None)
+            if attr:
+                setattr(profile, key, value)
+        profile.save()
+        return HttpResponse("<h1>Done</h1>")
 
 @csrf_exempt
 def login_view(request):
@@ -38,11 +48,14 @@ def logout_view(request):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ProfileView(View):
-    def get(self, request,pk):
+    def get(self, request, pk):
         profile = Profile.objects.get(pk=pk)
         return render(request, 'social/profile.html', {'profile': profile, 'request': request})
 
-    def post(self, request):
+    def post(self, request, pk):
+        post_pk = int(request.POST.get('pk'))
+        if post_pk != request.session['user_id']:
+            return HttpResponse("<h1>Access Denied</h1>")
         profile = Profile.objects.get(pk=request.POST.get('pk'))
         for key, value in request.POST.items():
             attr = getattr(profile, key, None)
@@ -52,6 +65,7 @@ class ProfileView(View):
         return HttpResponse("<h1>Done</h1>")
 
 
+@csrf_exempt
 def search_view(request):
     search_word = request.GET.get('search')
     profiles = Profile.objects.filter(name=search_word)

