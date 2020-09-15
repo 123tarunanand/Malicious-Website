@@ -1,35 +1,44 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse
 from django.views import View
 from .models import Profile
 from .forms import ProfileForm
+import hashlib
 
 # Create your views here.
 
 @csrf_exempt
 def home_view(request):
-    context = {}
-    return render(request, 'social/home.html', context)
+    try:
+        profile = Profile.objects.get(pk=request.session['user_id'])
+        return render(request, 'social/home_profile.html',{'profile':profile})
+    except:
+        return redirect('login_view')
 
 @csrf_exempt
 def login_view(request):
     email = request.POST.get('email')
     password = request.POST.get('password')
+    if password:
+        password = hashlib.sha256(password.encode()).hexdigest()
     query = 'SELECT * FROM social_profile WHERE "email" = "%s" AND "password" = "%s"' % (email, password)
     query_result = Profile.objects.raw(query)
-    context = {}
     if query_result:
-        context['query_result'] = query_result
-        return render(request, 'social/login.html', context)
+        request.session['user_id'] = query_result[0].pk
+        return redirect('home_view')
     else:
-        return render(request, 'social/home.html', context)
+        return render(request, 'social/home.html')
+
+@csrf_exempt
+def logout_view(request):
+    del request.session['user_id']
+    return redirect('login_view')
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ProfileView(View):
-    def get(self, request):
-        pk = request.GET.get('pk')
+    def get(self, request,pk):
         profile = Profile.objects.get(pk=pk)
         return render(request, 'social/profile.html', {'profile': profile, 'request': request})
 
