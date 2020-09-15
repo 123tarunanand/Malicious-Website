@@ -5,4 +5,4 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 @csrf_exempt
 def main_view(request):
-    return render(request,'csrf/main.html')
+    return render(request, 'csrf/main.html')

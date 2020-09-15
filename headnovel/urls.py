@@ -18,6 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('social/', include('social.urls')),
+    path('csrf/', include('csrf.urls')),
     path('admin/', admin.site.urls),
     path('safe/',include('csrf.urls')),
 ]
