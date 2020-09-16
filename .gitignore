@@ -1,3 +1,5 @@
 headnovel/__pycache__/
 csrf/__pycache__/
 social/__pycache__/
+csrf/migrations/__pycache__/
+social/migrations/__pycache__/

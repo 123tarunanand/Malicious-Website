@@ -29,17 +29,21 @@ class HomeView(View):
 
 @csrf_exempt
 def login_view(request):
-    email = request.POST.get('email')
-    password = request.POST.get('password')
-    if password:
-        password = hashlib.sha256(password.encode()).hexdigest()
-    query = 'SELECT * FROM social_profile WHERE "email" = "%s" AND "password" = "%s"' % (email, password)
-    query_result = Profile.objects.raw(query)
-    if query_result:
-        request.session['user_id'] = query_result[0].pk
-        return redirect('home_view')
-    else:
-        return render(request, 'social/home.html')
+    try:
+        profile = Profile.objects.get(pk=request.session['user_id'])
+        return render(request, 'social/home_profile.html',{'profile':profile})
+    except:
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        if password:
+            password = hashlib.sha256(password.encode()).hexdigest()
+        query = 'SELECT * FROM social_profile WHERE "email" = "%s" AND "password" = "%s"' % (email, password)
+        query_result = Profile.objects.raw(query)
+        if query_result:
+            request.session['user_id'] = query_result[0].pk
+            return redirect('home_view')
+        else:
+            return render(request, 'social/home.html')
 
 @csrf_exempt
 def logout_view(request):
