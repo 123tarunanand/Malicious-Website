@@ -53,6 +53,10 @@ class ProfileView(View):
         return render(request, 'social/profile.html', {'profile': profile, 'request': request})
 
     def post(self, request, pk):
+        print(request.POST)
+        for key, value in request.POST.items():
+            print(key)
+            print(value)
         post_pk = int(request.POST.get('pk'))
         if post_pk != request.session['user_id']:
             return HttpResponse("<h1>Access Denied</h1>")

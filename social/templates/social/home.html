@@ -1,6 +1,7 @@
 {% extends 'social/base.html' %}
 
 {% block content %}
+<div id="viewer" style="display:none;">{{ request.session.user_id }}</div>
 <div class="login-background">
     <div class="login-modal shadow p-3 mb-8 rounded">
         <h1 class="display-4 text-center">headnovel</h1> 
