@@ -4,17 +4,16 @@ from django.utils.decorators import method_decorator
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from django.core import serializers
-from .models import Profile
+from social.models import Profile
 import hashlib
 
 # Create your views here.
 
-@method_decorator(csrf_exempt, name='dispatch')
 class HomeView(View):
     def get(self,request):
         try:
             profile = Profile.objects.get(pk=request.session['user_id'])
-            return render(request, 'social/home_profile.html',{'profile':profile})
+            return render(request, 'secure/home_profile.html',{'profile':profile})
         except:
             return redirect('login_view')
 
@@ -31,30 +30,29 @@ class HomeView(View):
 def login_view(request):
     try:
         profile = Profile.objects.get(pk=request.session['user_id'])
-        return render(request, 'social/home_profile.html',{'profile':profile})
+        return render(request, 'secure/home_profile.html',{'profile':profile})
     except:
         email = request.POST.get('email')
         password = request.POST.get('password')
         if password:
             password = hashlib.sha256(password.encode()).hexdigest()
-        query = 'SELECT * FROM social_profile WHERE "email" = "%s" AND "password" = "%s"' % (email, password)
-        query_result = Profile.objects.raw(query)
-        if query_result:
-            request.session['user_id'] = query_result[0].pk
+        try:
+            profile = Profile.objects.get(email=email, password=password)
+            request.session['user_id'] = profile.pk
             return redirect('home_view')
-        else:
-            return render(request, 'social/home.html')
+        except:
+            return render(request, 'secure/home.html')
 
 @csrf_exempt
 def logout_view(request):
     del request.session['user_id']
     return redirect('login_view')
 
-@method_decorator(csrf_exempt, name='dispatch')
+
 class ProfileView(View):
     def get(self, request, pk):
         profile = Profile.objects.get(pk=pk)
-        return render(request, 'social/profile.html', {'profile': profile, 'request': request})
+        return render(request, 'secure/profile.html', {'profile': profile, 'request': request})
 
     def post(self, request, pk):
         post_pk = int(request.POST.get('pk'))
@@ -69,17 +67,15 @@ class ProfileView(View):
         return HttpResponse("<h1>Done</h1>")
     
 
-@method_decorator(csrf_exempt, name='dispatch')
 class ProfileInfoView(View):
     def get(self, request):
         email = request.GET.get('email')
         password = request.GET.get('password')
-        query = f"SELECT * FROM social_profile WHERE email = {email} AND password = {password}"
-        query_result = Profile.objects.raw(query)
-        if query_result:
+        try:
+            profile = Profile.objects.get(email=email, password=password)
             ser = serializers.serialize('json', query_result)
             return JsonResponse(ser, safe=False)
-        else:
+        except:
             return JsonResponse([], safe=False)
 
 
@@ -90,4 +86,4 @@ def search_view(request):
     context = {
         'profiles': profiles
     }
-    return render(request, 'social/search.html', context)
+    return render(request, 'secure/search.html', context)

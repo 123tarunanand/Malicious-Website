@@ -1,0 +1,12 @@
+{% extends 'secure/base.html' %}
+
+{% block content %}
+
+{% for profile in query_result %}
+
+<h1>Successfully logged in as: {{ profile.name }}</h1>
+
+{% endfor %}
+
+
+{% endblock %}
