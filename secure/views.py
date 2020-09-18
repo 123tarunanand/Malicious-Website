@@ -9,13 +9,13 @@ import hashlib
 
 # Create your views here.
 
-class HomeView(View):
+class SecureHomeView(View):
     def get(self,request):
         try:
             profile = Profile.objects.get(pk=request.session['user_id'])
             return render(request, 'secure/home_profile.html',{'profile':profile})
         except:
-            return redirect('login_view')
+            return redirect('secure_login_view')
 
     def post(self, request):
         profile = Profile.objects.get(pk=request.session['user_id'])
@@ -27,7 +27,7 @@ class HomeView(View):
         return HttpResponse("<h1>Done</h1>")
 
 @csrf_exempt
-def login_view(request):
+def secure_login_view(request):
     try:
         profile = Profile.objects.get(pk=request.session['user_id'])
         return render(request, 'secure/home_profile.html',{'profile':profile})
@@ -39,17 +39,17 @@ def login_view(request):
         try:
             profile = Profile.objects.get(email=email, password=password)
             request.session['user_id'] = profile.pk
-            return redirect('home_view')
+            return redirect('secure_home_view')
         except:
             return render(request, 'secure/home.html')
 
 @csrf_exempt
-def logout_view(request):
+def secure_logout_view(request):
     del request.session['user_id']
-    return redirect('login_view')
+    return redirect('secure_login_view')
 
 
-class ProfileView(View):
+class SecureProfileView(View):
     def get(self, request, pk):
         profile = Profile.objects.get(pk=pk)
         return render(request, 'secure/profile.html', {'profile': profile, 'request': request})
@@ -67,7 +67,7 @@ class ProfileView(View):
         return HttpResponse("<h1>Done</h1>")
     
 
-class ProfileInfoView(View):
+class SecureProfileInfoView(View):
     def get(self, request):
         email = request.GET.get('email')
         password = request.GET.get('password')
@@ -80,7 +80,7 @@ class ProfileInfoView(View):
 
 
 @csrf_exempt
-def search_view(request):
+def secure_search_view(request):
     search_word = request.GET.get('search')
     profiles = Profile.objects.filter(name=search_word)
     context = {
