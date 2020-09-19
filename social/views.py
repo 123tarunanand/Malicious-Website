@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View
 from django.core import serializers
 from .models import Profile
-import hashlib
+
 
 # Create your views here.
 
@@ -35,8 +35,6 @@ def login_view(request):
     except:
         email = request.POST.get('email')
         password = request.POST.get('password')
-        if password:
-            password = hashlib.sha256(password.encode()).hexdigest()
         query = 'SELECT * FROM social_profile WHERE "email" = "%s" AND "password" = "%s"' % (email, password)
         query_result = Profile.objects.raw(query)
         if query_result:
@@ -67,7 +65,7 @@ class ProfileView(View):
                 setattr(profile, key, value)
         profile.save()
         return HttpResponse("<h1>Done</h1>")
-    
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ProfileInfoView(View):

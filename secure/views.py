@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View
 from django.core import serializers
 from social.models import Profile
-import hashlib
+
 
 # Create your views here.
 
@@ -34,8 +34,6 @@ def secure_login_view(request):
     except:
         email = request.POST.get('email')
         password = request.POST.get('password')
-        if password:
-            password = hashlib.sha256(password.encode()).hexdigest()
         try:
             profile = Profile.objects.get(email=email, password=password)
             request.session['user_id'] = profile.pk
@@ -65,7 +63,7 @@ class SecureProfileView(View):
                 setattr(profile, key, value)
         profile.save()
         return HttpResponse("<h1>Done</h1>")
-    
+
 
 class SecureProfileInfoView(View):
     def get(self, request):
